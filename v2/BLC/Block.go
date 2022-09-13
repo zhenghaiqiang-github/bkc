@@ -6,10 +6,9 @@ import (
 	"time"
 )
 
-// 区块基本结构与功能管理文件
-
-// 1.实现一个最基本本的区块结构
-
+// Block 区块基本结构与功能管理文件
+//
+// 1.1实现一个最基本本的区块结构
 type Block struct {
 	TimeStamp    int64  // 时间戳
 	Hash         []byte // 当前区块HASH
@@ -18,8 +17,7 @@ type Block struct {
 	Data         []byte //交易数据
 }
 
-// 2.新建一个区块
-
+// NewBlock 1.2新建一个区块
 func NewBlock(height int64, prevBlockHash []byte, hash []byte, data []byte) *Block {
 	//声明区块对象
 	var block Block
@@ -37,9 +35,8 @@ func NewBlock(height int64, prevBlockHash []byte, hash []byte, data []byte) *Blo
 	return &block
 }
 
-// function method
-// 3.生成哈希-计算区块哈希
-
+// SetHash function method
+// 1.3生成哈希-计算区块哈希
 func (b *Block) SetHash() {
 	// 调用sha256实现哈希生成
 	// 实现int64->hash
@@ -54,4 +51,9 @@ func (b *Block) SetHash() {
 
 	hash := sha256.Sum256(blockBytes)
 	b.Hash = hash[:]
+}
+
+// CreateGenesisBlock 生成创世区块
+func CreateGenesisBlock(data []byte) *Block {
+	return NewBlock(1, nil, nil, data)
 }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bkc/v2/BLC"
+	"bkc/v3/BLC"
 	"fmt"
 )
 

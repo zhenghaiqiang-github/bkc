@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-// IntToHex 4.实现int64转[]byte
+// IntToHex 1.4实现int64转[]byte
 func IntToHex(data int64) []byte {
 	buffer := new(bytes.Buffer)
 	err := binary.Write(buffer, binary.BigEndian, data)
