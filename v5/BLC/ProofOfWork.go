@@ -11,7 +11,7 @@ import (
 // 实现POW实例以及相关功能
 
 // 目标难度值
-const targetBit = 24
+const targetBit = 16
 
 // ProofOfWork 3.1工作量证明的结构
 type ProofOfWork struct {

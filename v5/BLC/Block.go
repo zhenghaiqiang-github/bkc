@@ -3,6 +3,8 @@ package BLC
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/gob"
+	"log"
 	"time"
 )
 
@@ -65,13 +67,24 @@ func CreateGenesisBlock(data []byte) *Block {
 
 // 区块结构化序列
 func (block *Block) Serialize() []byte {
+	var buffer bytes.Buffer
+	//新建编码对象
+	encoder := gob.NewEncoder(&buffer)
+	//编码(序列化)
+	if err := encoder.Encode(block); err != nil {
+		log.Panicf("serialize the block to []byte failed %v\n", err)
+	}
 
-	return nil
+	return buffer.Bytes()
 }
 
 // 区块数据反序列化
 func DeserializeBlock(blockBytes []byte) *Block {
 	var block Block
+	decoder := gob.NewDecoder(bytes.NewReader(blockBytes))
+	if err := decoder.Decode(&block); err != nil {
+		log.Panicf("deserialize the []byte to block failed! %v\n", err)
+	}
 
 	return &block
 }

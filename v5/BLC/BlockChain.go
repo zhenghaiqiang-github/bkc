@@ -25,7 +25,7 @@ func CreateBlockChainWithGenesisBlock() *BlockChain {
 	//保存最新区块哈希值
 	var blockHash []byte
 	//2.2生成创世区块
-	block := CreateGenesisBlock([]byte("init blockchain"))
+	//block := CreateGenesisBlock([]byte("init blockchain"))
 	// 5.1创建或者打开一个数据库
 	// w r x 4 2 1
 	db, err := bolt.Open(dbName, 0600, nil)
@@ -66,8 +66,35 @@ func CreateBlockChainWithGenesisBlock() *BlockChain {
 }
 
 // AddBlock 2.3添加区块到区块链中
-func (bc *BlockChain) AddBlock(height int64, preBlockHash []byte, data []byte) {
-	//var newBlock *Block
-	newBlock := NewBlock(height, preBlockHash, nil, data)
-	bc.Blocks = append(bc.Blocks, newBlock)
+func (bc *BlockChain) AddBlock(data []byte) {
+	// 更新区块数据(insert)
+	err := bc.DB.Update(func(tx *bolt.Tx) error {
+		//1.获取数据库桶
+		b := tx.Bucket([]byte(blockTableName))
+		if nil != b {
+			//2.获取最后插入的区块
+			blockBytes := b.Get(bc.Tip)
+			//3.区块数据反序列化
+			latest_block := DeserializeBlock(blockBytes)
+			//3.新建区块
+			newBlock := NewBlock(latest_block.Height+1, latest_block.Hash, nil, data)
+			//4. 存入数据库
+			err := b.Put(newBlock.Hash, newBlock.Serialize())
+			if nil != err {
+				log.Panicf("insert the new block to db failed%v", err)
+			}
+			// 更新最新区块的哈希(数据库)
+			err = b.Put([]byte("1"), newBlock.Hash)
+			if nil != err {
+				log.Panicf("update the latest block hash to db failed%v", err)
+			}
+			//更行区块链对象中的最新区块哈希
+			bc.Tip = newBlock.Hash
+		}
+
+		return nil
+	})
+	if err != nil {
+		log.Panicf("insert block to db failed %v", err)
+	}
 }
