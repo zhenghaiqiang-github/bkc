@@ -62,3 +62,16 @@ func (b *Block) SetHash() {
 func CreateGenesisBlock(data []byte) *Block {
 	return NewBlock(1, nil, nil, data)
 }
+
+// 区块结构化序列
+func (block *Block) Serialize() []byte {
+
+	return nil
+}
+
+// 区块数据反序列化
+func DeserializeBlock(blockBytes []byte) *Block {
+	var block Block
+
+	return &block
+}
